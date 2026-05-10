@@ -1,3 +1,4 @@
+local player = game:GetService("Players").LocalPlayer
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SynioxStudios/Syniox-Ui/refs/heads/main/Syniox%20Gui.txt"))()
 local displayName = player.DisplayName
 
