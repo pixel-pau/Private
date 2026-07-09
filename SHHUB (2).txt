@@ -910,7 +910,7 @@ end)
 Kill:AddLabel("--------------------")
 Kill:AddLabel("Kill")
 
-Killer:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
+Kill:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
     _G.AutoKill = bool
     task.spawn(function()
         while _G.AutoKill do
