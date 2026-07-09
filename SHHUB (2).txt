@@ -881,14 +881,14 @@ Kill:AddSwitch("🦵 Fast Stomp", function(state)
 end)
 
 Kill:AddLabel("--------------------")
-Kill:AddLabel("🫂 Whitelist")
+Kill:AddLabel("✨ Whitelist")
 
 local whitelistShow = Kill:AddLabel("Whitelisted: None")
 
 local function updateWhitelistLabel()
     local str = ""
     for name, _ in pairs(playerWhitelist) do str = str .. name .. ", " end
-    whitelistShow:Set(str ~= "" and "Whitelisted: " .. str:sub(1, #str - 2) or "Whitelisted: None")
+    whitelistShow.Text = str ~= "" and "Whitelisted: " .. str:sub(1, #str - 2) or "Whitelisted: None"
 end
 
 local whitelistDropdown = Kill:AddDropdown("Whitelist Player", function(name)
