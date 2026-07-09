@@ -554,7 +554,101 @@ rebirths:AddSwitch("🔄 Auto Buy Selected", function(state)
     end
 end)
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 local Kill = window:AddTab("Kill")
+
+local playerWhitelist = {}
+local targetPlayerNames = {}
+local selectedFollowTarget = nil
+_G.FollowToTarget = false
+local autoGoodKarma = false
+local autoBadKarma = false
+local autoEquipPunch = false
+local autoPunchNoAnim = false
+local RemoveAnimActive = false
+
+Kill:AddLabel("Misc")
+
+local spyTargetDropdown = Kill:AddDropdown("👀 Select View Target", function(name)
+    targetPlayerName = name
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        spyTargetDropdown:Add(player.Name)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        spyTargetDropdown:Add(player.Name)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    if player ~= LocalPlayer then
+        spyTargetDropdown:Clear()
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= LocalPlayer then
+                spyTargetDropdown:Add(plr.Name)
+            end
+        end
+    end
+end)
+
+Kill:AddSwitch("👀 View Player", function(bool)
+    spying = bool
+    if not spying then
+        local cam = workspace.CurrentCamera
+        cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") or LocalPlayer
+        return
+    end
+    task.spawn(function()
+        while spying do
+            local target = Players:FindFirstChild(targetPlayerName)
+            if target and target ~= LocalPlayer then
+                local humanoid = target.Character and target.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    workspace.CurrentCamera.CameraSubject = humanoid
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local followDropdown = Kill:AddDropdown("👤 Select Follow Target", function(name)
+    selectedFollowTarget = name
+    _G.FollowToTarget = true
+    
+    task.spawn(function()
+        while _G.FollowToTarget and selectedFollowTarget == name do
+            local t = game.Players:FindFirstChild(selectedFollowTarget)
+            local myChar = LocalPlayer.Character
+            local myHRP = myChar and myChar:FindFirstChild("HumanoidRootPart")
+            
+            if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") and myHRP then
+                myHRP.CFrame = t.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 2.5)
+            end
+            task.wait()
+        end
+    end)
+end)
+
+Kill:AddButton("⛔ Stop Follow", function()
+    _G.FollowToTarget = false
+    selectedFollowTarget = nil
+end)
+
+local function updateFollowDropdown(p)
+    if p ~= LocalPlayer then
+        followDropdown:Add(p.Name)
+    end
+end
+
+for _, p in ipairs(game.Players:GetPlayers()) do updateFollowDropdown(p) end
+game.Players.PlayerAdded:Connect(updateFollowDropdown)
 
 Kill:AddLabel("🥊 Combat Tweaks")
 
