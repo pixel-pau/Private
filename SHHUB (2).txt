@@ -892,54 +892,22 @@ local function updateWhitelistLabel()
 end
 
 local whitelistDropdown = Kill:AddDropdown("Whitelist Player", function(name)
-    if name then
-        playerWhitelist[name] = true
-        updateWhitelistLabel()
-    end
-end)
-
-local dropdownEntries = {}
-
-for _, p in ipairs(Players:GetPlayers()) do
-    if p ~= LocalPlayer then
-        dropdownEntries[p.Name] = whitelistDropdown:Add(p.Name)
-    end
-end
-
-Players.PlayerAdded:Connect(function(p)
-    if p ~= LocalPlayer then
-        dropdownEntries[p.Name] = whitelistDropdown:Add(p.Name)
-    end
-end)
-
-Players.PlayerRemoving:Connect(function(p)
-    if dropdownEntries[p.Name] then
-        dropdownEntries[p.Name]:Remove()
-        dropdownEntries[p.Name] = nil
-    end
-    playerWhitelist[p.Name] = nil
-    updateWhitelistLabel()
+    if name then playerWhitelist[name] = true updateWhitelistLabel() end
 end)
 
 Kill:AddButton("🧹 Clear Whitelist", function()
-    playerWhitelist = {}
-    updateWhitelistLabel()
+    playerWhitelist = {} updateWhitelistLabel()
 end)
 
 Kill:AddSwitch("🛡️ Auto Whitelist Friends", function(state)
     _G.WhFriends = state
     if state then
         for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and LocalPlayer:IsFriendsWith(p.UserId) then
-                playerWhitelist[p.Name] = true
-            end
+            if p ~= LocalPlayer and LocalPlayer:IsFriendsWith(p.UserId) then playerWhitelist[p.Name] = true end
         end
         updateWhitelistLabel()
     end
 end)
-
-Kill:AddLabel("--------------------")
-Kill:AddLabel("Kill")
 
 Kill:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
     _G.AutoKill = bool
@@ -960,7 +928,7 @@ Kill:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
                     end
                 end
             end
-            task.wait(0.05)
+            task.wait(0.01)
         end
     end)
 end)
@@ -972,11 +940,13 @@ Kill:AddSwitch("😇 Auto Good Karma", function(bool)
             while _G.GoodKarma do
                 local char = LocalPlayer.Character
                 local rHand = char and char:FindFirstChild("RightHand")
+                
                 if rHand and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
                     for _, target in ipairs(Players:GetPlayers()) do
                         if target ~= LocalPlayer then
                             local evil = target:FindFirstChild("evilKarma")
                             local good = target:FindFirstChild("goodKarma")
+                            
                             if evil and good and evil.Value > good.Value then
                                 local tChar = target.Character
                                 if tChar and tChar:FindFirstChild("Humanoid") and tChar.Humanoid.Health > 0 then
@@ -1003,11 +973,13 @@ Kill:AddSwitch("😈 Auto Bad Karma", function(bool)
             while _G.BadKarma do
                 local char = LocalPlayer.Character
                 local rHand = char and char:FindFirstChild("RightHand")
+                
                 if rHand and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
                     for _, target in ipairs(Players:GetPlayers()) do
                         if target ~= LocalPlayer then
                             local evil = target:FindFirstChild("evilKarma")
                             local good = target:FindFirstChild("goodKarma")
+                            
                             if evil and good and good.Value > evil.Value then
                                 local tChar = target.Character
                                 if tChar and tChar:FindFirstChild("Humanoid") and tChar.Humanoid.Health > 0 then
