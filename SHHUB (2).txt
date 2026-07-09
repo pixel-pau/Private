@@ -886,7 +886,7 @@ local whitelistShow = Kill:AddLabel("Whitelisted: None")
 local function updateWhitelistLabel()
     local str = ""
     for name, _ in pairs(playerWhitelist) do str = str .. name .. ", " end
-    whitelistShow.Text = str ~= "" and "Whitelisted: " .. str:sub(1, #str - 2) or "Whitelisted: None"
+    whitelistShow:Set(str ~= "" and "Whitelisted: " .. str:sub(1, #str - 2) or "Whitelisted: None")
 end
 
 local whitelistDropdown = Kill:AddDropdown("Whitelist Player", function(name)
@@ -909,6 +909,96 @@ end)
 
 Kill:AddLabel("--------------------")
 Kill:AddLabel("Kill")
+
+Killer:AddSwitch("⚔️ Auto Kill All (Ignore Whitelist)", function(bool)
+    _G.AutoKill = bool
+    task.spawn(function()
+        while _G.AutoKill do
+            local char = LocalPlayer.Character
+            local rHand = char and char:FindFirstChild("RightHand")
+            if rHand then
+                for _, target in ipairs(Players:GetPlayers()) do
+                    if target ~= LocalPlayer and not playerWhitelist[target.Name] then
+                        local root = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+                        if root then
+                            pcall(function()
+                                firetouchinterest(rHand, root, 1)
+                                firetouchinterest(rHand, root, 0)
+                            end)
+                        end
+                    end
+                end
+            end
+            task.wait(0.05)
+        end
+    end)
+end)
+
+Kill:AddSwitch("😇 Auto Good Karma", function(bool)
+    _G.GoodKarma = bool
+    if bool then
+        task.spawn(function()
+            while _G.GoodKarma do
+                local char = LocalPlayer.Character
+                local rHand = char and char:FindFirstChild("RightHand")
+                
+                if rHand and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
+                    for _, target in ipairs(Players:GetPlayers()) do
+                        if target ~= LocalPlayer then
+                            local evil = target:FindFirstChild("evilKarma")
+                            local good = target:FindFirstChild("goodKarma")
+                            
+                            if evil and good and evil.Value > good.Value then
+                                local tChar = target.Character
+                                if tChar and tChar:FindFirstChild("Humanoid") and tChar.Humanoid.Health > 0 then
+                                    local root = tChar:FindFirstChild("HumanoidRootPart")
+                                    if root then
+                                        firetouchinterest(rHand, root, 0)
+                                        firetouchinterest(rHand, root, 1)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+Kill:AddSwitch("😈 Auto Bad Karma", function(bool)
+    _G.BadKarma = bool
+    if bool then
+        task.spawn(function()
+            while _G.BadKarma do
+                local char = LocalPlayer.Character
+                local rHand = char and char:FindFirstChild("RightHand")
+                
+                if rHand and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
+                    for _, target in ipairs(Players:GetPlayers()) do
+                        if target ~= LocalPlayer then
+                            local evil = target:FindFirstChild("evilKarma")
+                            local good = target:FindFirstChild("goodKarma")
+                            
+                            if evil and good and good.Value > evil.Value then
+                                local tChar = target.Character
+                                if tChar and tChar:FindFirstChild("Humanoid") and tChar.Humanoid.Health > 0 then
+                                    local root = tChar:FindFirstChild("HumanoidRootPart")
+                                    if root then
+                                        firetouchinterest(rHand, root, 0)
+                                        firetouchinterest(rHand, root, 1)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
 
 local LookDura = window:AddTab("Stats")
 local SelectPlayerName = ""
