@@ -22,21 +22,35 @@ local window = library:AddWindow("Syniox Public | Muscle Legends || HELLO - ".. 
 local AutoFarm = window:AddTab("Farm")
 AutoFarm:AddLabel("Op Farm")
 
+local folder1 = AutoFarm:AddFolder(" 💪 Tools")
+
+local repsPerTick = 1
+
+folder1:AddTextBox("🚀 Thread Speed", function(value)
+    local num = tonumber(value)
+    if num and num > 0 then 
+        repsPerTick = math.floor(num)
+    else
+        repsPerTick = 1
+    end
+end, {placeholder = "Enter Amount (Default: 1)"})
+
 _G.repToggle = false
-AutoFarm:AddSwitch("💪 Auto Farm (Equip Any tool)", function(state)
+folder1:AddSwitch("💪 Auto Farm (Equip Any tool)", function(state)
     _G.repToggle = state
     task.spawn(function()
         while _G.repToggle do
             local event = game:GetService("Players").LocalPlayer:FindFirstChild("muscleEvent")
             if event then
-                event:FireServer("rep")
+                for i = 1, repsPerTick do
+                    if not _G.repToggle then break end
+                    event:FireServer("rep")
+                end
             end
-            task.wait(0.1)
+            task.wait(0.01)
         end
     end)
 end)
-
-local folder1 = AutoFarm:AddFolder(" 💪 Tools")
 
 local function manageTool(toolName)
     task.spawn(function()
@@ -53,13 +67,16 @@ local function manageTool(toolName)
                     
                     local event = player:FindFirstChild("muscleEvent")
                     if event then
-                        event:FireServer("rep")
+                        for i = 1, repsPerTick do
+                            if not _G[toolName.."On"] then break end
+                            event:FireServer("rep")
+                        end
                     else
                         tool:Activate()
                     end
                 end
             end
-            task.wait(0.1)
+            task.wait(0.01)
         end
     end)
 end
@@ -537,16 +554,7 @@ end)
 
 local autoEquipToolsFolder = rebirths:AddFolder(" 🎒 Auto Equip Tools")
 
-autoEquipToolsFolder:AddButton("💎 Gamepass AutoLift", function()
-    local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
-    local player = game:GetService("Players").LocalPlayer
-    for _, gamepass in pairs(gamepassFolder:GetChildren()) do
-        local value = Instance.new("IntValue")
-        value.Name = gamepass.Name
-        value.Value = gamepass.Value
-        value.Parent = player.ownedGamepasses
-    end
-end, "🔓 Unlock AutoLift Passe")
+
 
 autoEquipToolsFolder:AddSwitch("💪 Auto Weight", function(Value)
     _G.AutoWeight = Value
@@ -2793,6 +2801,17 @@ timeDropdown:Add("Night")
 timeDropdown:Add("Day")
 timeDropdown:Add("Midnight")
 
+Misc:AddButton("💎 Gamepass AutoLift", function()
+    local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
+    local player = game:GetService("Players").LocalPlayer
+    for _, gamepass in pairs(gamepassFolder:GetChildren()) do
+        local value = Instance.new("IntValue")
+        value.Name = gamepass.Name
+        value.Value = gamepass.Value
+        value.Parent = player.ownedGamepasses
+    end
+end, "🔓 Unlock AutoLift Pass")
+
 local scriptFolder = Misc:AddFolder(" 📜 External Scripts")
 
 scriptFolder:AddButton("⚡ Infinite Yield", function()
@@ -3258,13 +3277,13 @@ useMsg.TextColor3 = Color3.fromRGB(255, 255, 255)
 credits:AddLabel("👇 My Discord Server Link Here")
 
 credits:AddButton("Discord Link", function()
-    setclipboard("https://discord.gg/FsG2cGay")
+    setclipboard("https://discord.gg/DbAU5Z6HPd")
 end)
 
 credits:AddLabel(" ")
 credits:AddLabel("==================================")
 
-local bigTitle = credits:AddLabel("🚀 SYNIOX HUB V2 🚀")
+local bigTitle = credits:AddLabel("🚀 SYNIOX HUB V3 🚀")
 
 pcall(function()
     bigTitle.TextSize = 25
