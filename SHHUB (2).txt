@@ -989,6 +989,18 @@ local whitelistDropdown = Kill:AddDropdown("Whitelist Player", function(name)
     if name then playerWhitelist[name] = true updateWhitelistLabel() end
 end)
 
+for _, plr in ipairs(game:GetService("Players"):GetPlayers()) do
+    if plr ~= game.Players.LocalPlayer then
+        whitelistDropdown:Add(plr.Name)
+    end
+end
+
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+    if plr ~= game.Players.LocalPlayer then
+        whitelistDropdown:Add(plr.Name)
+    end
+end)
+
 Kill:AddButton("🧹 Clear Whitelist", function()
     playerWhitelist = {} updateWhitelistLabel()
 end)
