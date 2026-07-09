@@ -879,7 +879,7 @@ Kill:AddSwitch("🦵 Fast Stomp", function(state)
 end)
 
 Kill:AddLabel("--------------------")
-Kill:AddLabel("🛡️ Target & Whitelist")
+Kill:AddLabel("🫂 Whitelist")
 
 local whitelistShow = Kill:AddLabel("Whitelisted: None")
 
