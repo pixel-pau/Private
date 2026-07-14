@@ -655,6 +655,7 @@ end
 for _, p in ipairs(game.Players:GetPlayers()) do updateFollowDropdown(p) end
 game.Players.PlayerAdded:Connect(updateFollowDropdown)
 
+Kill:AddLabel("----------------------------")
 Kill:AddLabel("🥊 Combat Tweaks")
 
 local blockedAnimations = {
@@ -1109,6 +1110,60 @@ Kill:AddSwitch("😈 Auto Bad Karma", function(bool)
         end)
     end
 end)
+
+Kill:AddLabel("----------------------------")
+Kill:AddLabel("🎯 Target Kill")
+
+local blacklistShow = Kill:AddLabel("Targets: None")
+
+local function updateBlacklistLabel()
+    local str = ""
+    for _, name in ipairs(targetPlayerNames) do str = str .. name .. ", " end
+    blacklistShow.Text = str ~= "" and "Targets: " .. str:sub(1, #str - 2) or "Targets: None"
+end
+
+local targetDropdown = Kill:AddDropdown("🎭 Select Target", function(name)
+    if name and not table.find(targetPlayerNames, name) then 
+        table.insert(targetPlayerNames, name) 
+        updateBlacklistLabel()
+    end
+end)
+
+Kill:AddButton("🚫 Clear Blacklist", function()
+    targetPlayerNames = {} updateBlacklistLabel()
+end)
+
+Kill:AddSwitch("🎯 Start Kill Target", function(state)
+    _G.KillTarget = state
+    task.spawn(function()
+        while _G.KillTarget do
+            local char = LocalPlayer.Character
+            local rHand = char and char:FindFirstChild("RightHand")
+            if rHand then
+                for _, name in ipairs(targetPlayerNames) do
+                    local t = Players:FindFirstChild(name)
+                    if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            firetouchinterest(rHand, t.Character.HumanoidRootPart, 1)
+                            firetouchinterest(rHand, t.Character.HumanoidRootPart, 0)
+                        end)
+                    end
+                end
+            end
+            task.wait(0.05)
+        end
+    end)
+end)
+
+local function updateAllDropdowns(p)
+    if p ~= LocalPlayer then
+        whitelistDropdown:Add(p.Name)
+        targetDropdown:Add(p.Name)
+    end
+end
+
+for _, p in ipairs(Players:GetPlayers()) do updateAllDropdowns(p) end
+Players.PlayerAdded:Connect(updateAllDropdowns)
 
 local LookDura = window:AddTab("Stats")
 local SelectPlayerName = ""
