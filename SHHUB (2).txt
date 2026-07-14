@@ -22,13 +22,11 @@ local window = library:AddWindow("Syniox Public | Muscle Legends || HELLO - ".. 
 })
 
 local AutoFarm = window:AddTab("Farm")
-AutoFarm:AddLabel("Op Farm")
-
-local folder1 = AutoFarm:AddFolder(" 💪 Tools")
+AutoFarm:AddLabel("Tools Farm")
 
 local repsPerTick = 1
 
-folder1:AddTextBox("🚀 Thread Speed", function(value)
+AutoFarm:AddTextBox("🚀 Thread Speed", function(value)
     local num = tonumber(value)
     if num and num > 0 then 
         repsPerTick = math.floor(num)
@@ -38,7 +36,7 @@ folder1:AddTextBox("🚀 Thread Speed", function(value)
 end, {placeholder = "Enter Amount (Default: 1)"})
 
 _G.repToggle = false
-folder1:AddSwitch("💪 Auto Farm (Equip Any tool)", function(state)
+AutoFarm:AddSwitch("💪 Auto Farm (Equip Any tool)", function(state)
     _G.repToggle = state
     task.spawn(function()
         while _G.repToggle do
@@ -83,25 +81,28 @@ local function manageTool(toolName)
     end)
 end
 
-folder1:AddSwitch("🏋️ Weight", function(bool)
+AutoFarm:AddSwitch("🏋️ Weight", function(bool)
     _G.WeightOn = bool
     if bool then manageTool("Weight") end
 end)
 
-folder1:AddSwitch("💪 Pushups", function(bool)
+AutoFarm:AddSwitch("💪 Pushups", function(bool)
     _G.PushupsOn = bool
     if bool then manageTool("Pushups") end
 end)
 
-folder1:AddSwitch("🤸 Handstands", function(bool)
+AutoFarm:AddSwitch("🤸 Handstands", function(bool)
     _G.HandstandsOn = bool
     if bool then manageTool("Handstands") end
 end)
 
-folder1:AddSwitch("🧘 Situps", function(bool)
+AutoFarm:AddSwitch("🧘 Situps", function(bool)
     _G.SitupsOn = bool
     if bool then manageTool("Situps") end
 end)
+
+AutoFarm:AddLabel("----------------------------")
+AutoFarm:AddLabel("💨 Treadmill Farm")
 
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local Players = game:GetService("Players")
@@ -136,10 +137,8 @@ local function stopAll()
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
 end
 
-local FarmFolder = AutoFarm:AddFolder(" ⚡ Treadmill")
-
 for _, loc in ipairs(Locations) do
-    FarmFolder:AddSwitch(loc.name, function(bool)
+    AutoFarm:AddSwitch(loc.name, function(bool)
         if bool then
             local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
@@ -153,18 +152,20 @@ for _, loc in ipairs(Locations) do
     end)
 end
 
-local JungleFolder = AutoFarm:AddFolder(" 🌴 Jungle Gym")
+AutoFarm:AddLabel("----------------------------")
+AutoFarm:AddLabel("🌴 Jungle Gym Farm")
 
 local VIM = game:GetService("VirtualInputManager")
+
 local function pressEKey()
     VIM:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.05)
+    task.wait(0.01)
     VIM:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end
 
 local function startJungleFarm(toggleName, cframeValue, eventName)
     local active = false
-    JungleFolder:AddSwitch(toggleName, function(bool)
+    AutoFarm:AddSwitch(toggleName, function(bool)
         active = bool
         if bool then
             task.spawn(function()
@@ -181,7 +182,7 @@ local function startJungleFarm(toggleName, cframeValue, eventName)
                         
                         game:GetService("Players").LocalPlayer.muscleEvent:FireServer(eventName)
                     end
-                    task.wait(0.05)
+                    task.wait(0.01)
                 end
             end)
         end
@@ -193,10 +194,11 @@ startJungleFarm("🏋️ Auto Bench Press", CFrame.new(-8173.23, 83.82, 1907.40)
 startJungleFarm("🦵 Auto Squat", CFrame.new(-8377.55, 48.71, 2864.90), "rep")
 startJungleFarm("💢 Auto Boulder", CFrame.new(-8614.81, 51.90, 2677.37), "rep")
 
+AutoFarm:AddLabel("----------------------------")
+AutoFarm:AddLabel("⚡ OP Tools")
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-
-local toolFolder = AutoFarm:AddFolder(" 💨 OP Tools")
 
 local function manageToolCombo(toolName)
     task.spawn(function()
@@ -235,25 +237,28 @@ local function manageToolCombo(toolName)
     end)
 end
 
-toolFolder:AddSwitch("🏋️ Weight + 🥊 Punch", function(bool)
+AutoFarm:AddSwitch("🏋️ Weight + 🥊 Punch", function(bool)
     _G.WeightOn = bool
     if bool then manageToolCombo("Weight") end
 end)
 
-toolFolder:AddSwitch("💪 Pushups + 🥊 Punch", function(bool)
+AutoFarm:AddSwitch("💪 Pushups + 🥊 Punch", function(bool)
     _G.PushupsOn = bool
     if bool then manageToolCombo("Pushups") end
 end)
 
-toolFolder:AddSwitch("🤸 Handstand + 🥊 Punch", function(bool)
+AutoFarm:AddSwitch("🤸 Handstand + 🥊 Punch", function(bool)
     _G.HandstandOn = bool
     if bool then manageToolCombo("Handstand") end
 end)
 
-toolFolder:AddSwitch("🧘 Situps + 🥊 Punch", function(bool)
+AutoFarm:AddSwitch("🧘 Situps + 🥊 Punch", function(bool)
     _G.SitupsOn = bool
     if bool then manageToolCombo("Situps") end
 end)
+
+AutoFarm:AddLabel("----------------------------")
+AutoFarm:AddLabel("💢 Brawl")
 
 local autoBrawl = false
 local godModeToggle = false
